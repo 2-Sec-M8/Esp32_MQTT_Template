@@ -6,6 +6,7 @@
 
 WiFiClient wifi;
 PubSubClient MQTT(wifi);
+String lastMsg;
 
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -16,12 +17,15 @@ void callback(char* topic, byte* payload, unsigned int length) {
     {
         msg += (char)payload[i];
     }
-    Serial.print("Received: ");
-    Serial.print(msg);
-    Serial.print(" from: ");
-    Serial.println(topic);
-    
-    handleMessage(String(msg));
+
+    if(String(msg) != lastMsg){
+      Serial.print("Received: ");
+      Serial.print(msg);
+      Serial.print(" from: ");
+      Serial.println(topic);
+      
+      handleMessage(String(msg));
+    }
 }
 
 void setup() {
@@ -63,7 +67,7 @@ bool sendMessage( String message, String topic = TOPIC) {
     Serial.print(message);
     Serial.print(" to: ");
     Serial.println(topic);
-
+    lastMsg = message;
     return true;
 
   } else {
